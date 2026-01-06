@@ -3,11 +3,16 @@ import express from 'express'
 const app = express()
 app.use(express.json())
 
+
 const shortestCommonSupersequence = (str1 = '', str2 = '') => {
     const m = str1.length
     const n = str2.length
-    const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0))
 
+    const dp = Array.from({ length: m + 1 }, () =>
+        Array(n + 1).fill(0)
+    )
+
+    
     for (let i = 1; i <= m; i++) {
         for (let j = 1; j <= n; j++) {
             if (str1[i - 1] === str2[j - 1]) {
@@ -18,6 +23,7 @@ const shortestCommonSupersequence = (str1 = '', str2 = '') => {
         }
     }
 
+    
     let i = m, j = n
     const ans = []
 
@@ -40,22 +46,37 @@ const shortestCommonSupersequence = (str1 = '', str2 = '') => {
     return ans.reverse().join('')
 }
 
+
 app.get('/', (req, res) => {
-    res.send('Hello World')
+    res.send('Shortest Common Supersequence API is running')
 })
 
-app.post('/scs', (req, res) => {
-    const { first = '', second = '' } = req.body
+
+app.get('/scs', (req, res) => {
+    const { first = '', second = '' } = req.query
 
     if (typeof first !== 'string' || typeof second !== 'string') {
-        return res.status(400).json({ error: 'first and second must be strings' })
+        return res.status(400).json({ error: 'Invalid input' })
     }
 
     const result = shortestCommonSupersequence(first, second)
     res.json({ result })
 })
 
+
+app.post('/scs', (req, res) => {
+    const { first = '', second = '' } = req.body
+
+    if (typeof first !== 'string' || typeof second !== 'string') {
+        return res.status(400).json({ error: 'Invalid input' })
+    }
+
+    const result = shortestCommonSupersequence(first, second)
+    res.json({ result })
+})
+
+
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`)
+    console.log(`Server running on port ${PORT}`)
 })
