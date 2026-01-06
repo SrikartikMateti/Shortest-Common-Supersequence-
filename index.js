@@ -1,7 +1,6 @@
 import express from 'express'
 
 const app = express()
-
 app.use(express.json())
 
 const shortestCommonSupersequence = (str1 = '', str2 = '') => {
@@ -19,15 +18,13 @@ const shortestCommonSupersequence = (str1 = '', str2 = '') => {
         }
     }
 
-    let i = m
-    let j = n
+    let i = m, j = n
     const ans = []
 
-    while (i >= 1 && j >= 1) {
+    while (i > 0 && j > 0) {
         if (str1[i - 1] === str2[j - 1]) {
             ans.push(str1[i - 1])
-            i--
-            j--
+            i--; j--
         } else if (dp[i - 1][j] > dp[i][j - 1]) {
             ans.push(str1[i - 1])
             i--
@@ -37,14 +34,8 @@ const shortestCommonSupersequence = (str1 = '', str2 = '') => {
         }
     }
 
-    while (i >= 1) {
-        ans.push(str1[i - 1])
-        i--
-    }
-    while (j >= 1) {
-        ans.push(str2[j - 1])
-        j--
-    }
+    while (i > 0) ans.push(str1[--i])
+    while (j > 0) ans.push(str2[--j])
 
     return ans.reverse().join('')
 }
@@ -54,7 +45,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/scs', (req, res) => {
-    const { first = '', second = '' } = req.body || {}
+    const { first = '', second = '' } = req.body
 
     if (typeof first !== 'string' || typeof second !== 'string') {
         return res.status(400).json({ error: 'first and second must be strings' })
@@ -64,6 +55,7 @@ app.post('/scs', (req, res) => {
     res.json({ result })
 })
 
-app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000')
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`)
 })
